@@ -1,12 +1,13 @@
 import { Controller, Get } from '@nestjs/common';
-import { AppService } from './app.service';
+import { RateService } from './rate/rate.service';
+import { IRate } from './rate/interfaces/rate.interface';
 
 @Controller()
 export class AppController {
-  constructor(private readonly appService: AppService) {}
+  constructor(private readonly rateService: RateService) {}
 
   @Get()
-  getHello(): string {
-    return this.appService.getHello();
+  async getExchangeRate(): Promise<IRate> {
+    return this.rateService.getExchangeRate();
   }
 }
