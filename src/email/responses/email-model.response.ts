@@ -1,11 +1,11 @@
 import { Exclude, Expose } from 'class-transformer';
-import { $Enums, Email, Status } from '@prisma/client';
+import { Email, Status } from '@prisma/client';
 
 @Exclude()
 export class EmailModelResponse {
   @Expose()
   public readonly id: string;
-  
+
   @Expose()
   public readonly email: string;
 

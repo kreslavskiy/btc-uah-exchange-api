@@ -29,19 +29,22 @@ export class RateService {
     return { date: result.data.time, rate: result.data.rate };
   }
 
-  public async sendCurrentRateEmail(emails: string[], message?: string): Promise<boolean> {
+  public async sendCurrentRateEmail(
+    emails: string[],
+    message?: string,
+  ): Promise<boolean> {
     const mailSendingPromises = [];
     const { date, rate } = await this.getExchangeRate();
 
     for (const email of emails) {
       mailSendingPromises.push(
-          this.emailService.sendCurrentRate({
+        this.emailService.sendCurrentRate({
           rate,
           email,
           message,
           date: new Date(date),
-        })
-      )
+        }),
+      );
     }
 
     await Promise.all(mailSendingPromises);

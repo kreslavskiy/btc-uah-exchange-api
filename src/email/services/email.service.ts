@@ -10,7 +10,7 @@ import { formatRateWithThousandsSeparator } from '../utils/format-rate.util';
 
 @Injectable()
 export class EmailService {
-  constructor (
+  constructor(
     private readonly prismaService: PrismaService,
     private readonly mailerService: MailerEmailService,
   ) {}
@@ -57,7 +57,7 @@ export class EmailService {
       data: {
         deletedAt: new Date(),
         status: Status.unsubscribed,
-      }
+      },
     });
 
     return true;
@@ -74,9 +74,10 @@ export class EmailService {
       throw EmailError.NotFound();
     }
 
-    const html = CURRENT_RATE_TEMPLATE
-      .replace('{{RATE}}', formatRateWithThousandsSeparator(payload.rate))
-      .replace('{{CURRENT_DATE}}', payload.date.toString());
+    const html = CURRENT_RATE_TEMPLATE.replace(
+      '{{RATE}}',
+      formatRateWithThousandsSeparator(payload.rate),
+    ).replace('{{CURRENT_DATE}}', payload.date.toString());
 
     await this.mailerService.send({
       to: payload.email,

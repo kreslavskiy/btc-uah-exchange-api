@@ -16,9 +16,9 @@ import { MailerEmailService } from './services/mailer-email.service';
         host: process.env.SMTP_HOST,
         auth: {
           user: process.env.SMTP_USERNAME,
-          pass: process.env.SMTP_PASSWORD
-        }
-      }
+          pass: process.env.SMTP_PASSWORD,
+        },
+      },
     }),
   ],
 })

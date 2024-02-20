@@ -5,7 +5,7 @@ export class DeleteEmailResponse {
   @Expose()
   public readonly deleted: boolean;
 
-  public constructor(deleted: boolean) {
+  constructor(deleted: boolean) {
     this.deleted = deleted;
   }
 }

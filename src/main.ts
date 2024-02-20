@@ -3,7 +3,7 @@ import { AppModule } from './app.module';
 import { EmailFilter } from './email/filters/email.exception-filter';
 import { ValidationPipe } from '@nestjs/common';
 
-async function bootstrap() {
+async function bootstrap(): Promise<void> {
   const app = await NestFactory.create(AppModule);
 
   app.useGlobalFilters(new EmailFilter());

@@ -7,9 +7,9 @@ import { EmailModule } from './email/email.module';
   imports: [
     RateModule,
     EmailModule,
-    ConfigModule.forRoot({ 
+    ConfigModule.forRoot({
       isGlobal: true,
-      envFilePath: ['.env', '.env.dist']
+      envFilePath: ['.env', '.env.dist'],
     }),
   ],
 })

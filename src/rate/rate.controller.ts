@@ -9,18 +9,19 @@ export class RateController {
   constructor(private readonly rateService: RateService) {}
 
   @Get()
-  async getExchangeRate(): Promise<GetExchangeRateResponse> {
+  public async getExchangeRate(): Promise<GetExchangeRateResponse> {
     const rate = await this.rateService.getExchangeRate();
 
     return new GetExchangeRateResponse(rate);
   }
 
   @Post('subscription')
-  async sendCurrentRate(
-    @Body() body: SendCurrentRateSchema
+  public async sendCurrentRate(
+    @Body() body: SendCurrentRateSchema,
   ): Promise<SendCurrentRateResponse> {
     const sent = await this.rateService.sendCurrentRateEmail(
-      body.emails, body.message
+      body.emails,
+      body.message,
     );
 
     return new SendCurrentRateResponse(sent);

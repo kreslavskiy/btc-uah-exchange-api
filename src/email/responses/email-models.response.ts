@@ -7,7 +7,7 @@ export class EmailModelsResponse {
   @Expose()
   public readonly emails: EmailModelResponse[];
 
-  constructor (emails: Email[]) {
-    this.emails = emails.map(email => new EmailModelResponse(email))
+  constructor(emails: Email[]) {
+    this.emails = emails.map((email) => new EmailModelResponse(email));
   }
 }

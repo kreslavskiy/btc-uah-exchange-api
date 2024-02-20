@@ -1,6 +1,5 @@
 import { Body, Controller, Delete, Get, Post } from '@nestjs/common';
 import { EmailService } from './services/email.service';
-import { Email } from '@prisma/client';
 import { CreateEmailSchema } from './schemas/create-email.schema';
 import { EmailModelResponse } from './responses/email-model.response';
 import { DeleteEmailResponse } from './responses/delete-email.response';
@@ -11,21 +10,25 @@ export class EmailController {
   constructor(private readonly emailService: EmailService) {}
 
   @Get()
-  async findAll(): Promise<EmailModelsResponse> {
+  public async findAll(): Promise<EmailModelsResponse> {
     const emails = await this.emailService.findAll();
 
     return new EmailModelsResponse(emails);
   }
 
   @Post()
-  async create(@Body() body: CreateEmailSchema): Promise<EmailModelResponse> {
+  public async create(
+    @Body() body: CreateEmailSchema,
+  ): Promise<EmailModelResponse> {
     const email = await this.emailService.create(body.email);
 
     return new EmailModelResponse(email);
   }
 
   @Delete()
-  async delete(@Body() body: CreateEmailSchema): Promise<DeleteEmailResponse> {
+  public async delete(
+    @Body() body: CreateEmailSchema,
+  ): Promise<DeleteEmailResponse> {
     const deleted = await this.emailService.delete(body.email);
 
     return new DeleteEmailResponse(deleted);
