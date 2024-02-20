@@ -1,7 +1,8 @@
-import { Controller, Get } from '@nestjs/common';
+import { Body, Controller, Get, Post } from '@nestjs/common';
 import { RateService } from './rate.service';
-import { IRate } from './interfaces/rate.interface';
 import { GetExchangeRateResponse } from './responses/get-exchange-rate.response';
+import { SendCurrentRateResponse } from './responses/send-current-rate.response';
+import { SendCurrentRateSchema } from './schemas/send-current-rate.schema';
 
 @Controller('api/rate')
 export class RateController {
@@ -12,5 +13,16 @@ export class RateController {
     const rate = await this.rateService.getExchangeRate();
 
     return new GetExchangeRateResponse(rate);
+  }
+
+  @Post('subscription')
+  async sendCurrentRate(
+    @Body() body: SendCurrentRateSchema
+  ): Promise<SendCurrentRateResponse> {
+    const sent = await this.rateService.sendCurrentRateEmail(
+      body.emails, body.message
+    );
+
+    return new SendCurrentRateResponse(sent);
   }
 }
