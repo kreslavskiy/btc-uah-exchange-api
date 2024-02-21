@@ -1,0 +1,41 @@
+version: '3'
+services:
+  prometheus:
+    image: prom/prometheus
+    container_name: worker_app
+    volumes:
+      - "./prometheus.yml:/etc/prometheus/prometheus.yml"
+    networks:
+      - localprom
+    ports:
+      - 9090:9090
+
+  postgres:
+    image: postgres:latest
+    restart: always
+    env_file: .env
+    environment:
+      POSTGRES_USER: $DATABASE_USER
+      POSTGRES_PASSWORD: $DATABASE_PASSWORD
+      POSTGRES_DB: $DATABASE_NAME
+    ports:
+      - "5434:5432"
+    networks:
+      - localprom
+
+  api:
+    container_name: service_app
+    build:
+      context: .
+      dockerfile: Dockerfile
+    env_file: .env
+    ports:
+      - "3000:3000"
+    depends_on:
+      - postgres
+    networks:
+      - localprom
+
+networks:
+  localprom:
+    driver: bridge

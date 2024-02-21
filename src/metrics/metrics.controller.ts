@@ -2,7 +2,7 @@ import { Controller, Get } from '@nestjs/common';
 import { MetricsService } from './metrics.service';
 import { MetricsResponse } from './responses/metrics.response';
 
-@Controller('metrics')
+@Controller('api/metrics')
 export class MetricsController {
   constructor(private readonly metricsService: MetricsService) {}
 
