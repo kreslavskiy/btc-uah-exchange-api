@@ -6,6 +6,7 @@ import { IGetExchangeRateResult } from './interfaces/get-exchange-rate-result.in
 import { RATE_CONSTANTS } from './rate.constants';
 import { ConfigService } from '@nestjs/config';
 import { EmailService } from 'src/email/services/email.service';
+import { MetricsService } from 'src/metrics/metrics.service';
 
 @Injectable()
 export class RateService {
@@ -13,6 +14,7 @@ export class RateService {
     private readonly httpService: HttpService,
     private readonly emailService: EmailService,
     private readonly configService: ConfigService,
+    private readonly metricsService: MetricsService,
   ) {}
 
   public async getExchangeRate(): Promise<IRate> {
@@ -25,6 +27,8 @@ export class RateService {
         },
       }),
     );
+
+    this.metricsService.setRate(result.data.rate);
 
     return { date: result.data.time, rate: result.data.rate };
   }
