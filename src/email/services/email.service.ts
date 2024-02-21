@@ -6,8 +6,8 @@ import { EMAIL_CONSTANTS } from '../email.constants';
 import { CURRENT_RATE_TEMPLATE } from '../templates/current-rate.template';
 import { ISendCurrentRate } from '../interfaces/send-current-rate.interface';
 import { formatRateWithThousandsSeparator } from '../utils/format-rate.util';
-import { PrismaDBService } from 'src/db/db.servise';
-import { MetricsService } from 'src/metrics/metrics.service';
+import { PrismaDBService } from '../../db/db.servise';
+import { MetricsService } from '../../metrics/metrics.service';
 
 @Injectable()
 export class EmailService {
