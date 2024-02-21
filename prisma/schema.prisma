@@ -25,3 +25,16 @@ enum Status {
   subscribed
   unsubscribed
 }
+
+model Metrics {
+  type  MetricsType @unique
+  value Float       @default(0)
+}
+
+enum MetricsType {
+  sent_emails_counter
+  sent_emails_error_counter
+  subscription_counter
+  unsubscription_counter
+  rate_gauge
+}
