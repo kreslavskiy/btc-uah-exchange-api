@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { Counter, Gauge, register } from 'prom-client';
 import { METRICS_CONSTANTS } from './metrics.constants';
-import { PrismaDBService } from 'src/db/db.servise';
+import { PrismaDBService } from '../db/db.servise';
 import { MetricsType } from '@prisma/client';
 import { IMetrics } from './interfaces/metrics.interface';
 

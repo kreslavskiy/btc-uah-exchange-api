@@ -5,8 +5,8 @@ import { IRate } from './interfaces/rate.interface';
 import { IGetExchangeRateResult } from './interfaces/get-exchange-rate-result.interface';
 import { RATE_CONSTANTS } from './rate.constants';
 import { ConfigService } from '@nestjs/config';
-import { EmailService } from 'src/email/services/email.service';
-import { MetricsService } from 'src/metrics/metrics.service';
+import { EmailService } from '../email/services/email.service';
+import { MetricsService } from '../metrics/metrics.service';
 
 @Injectable()
 export class RateService {
