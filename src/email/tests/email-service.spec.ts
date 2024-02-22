@@ -282,49 +282,51 @@ describe('EmailService', () => {
 
       expect(metricsService.incrementSentEmailsCounter).toBeCalledTimes(0);
     });
-  });
 
-  it('should have error in email sending', async () => {
-    const error = new Error('Email sending error');
-    const email = crypto.randomBytes(10).toString('hex');
-    const record = generateRandomEmail({ email });
-    const payload: ISendCurrentRate = {
-      email,
-      rate: 2_000_000,
-      date: new Date(),
-    };
-    const html = `\n  <p>Exchange rate is 1 BTC = 2 000 000.00 UAH at ${payload.date.toString()}</p>\n`;
-
-    jest.spyOn(prismaDbService.email, 'findUnique').mockResolvedValue(record);
-    jest.spyOn(mailerService, 'send').mockRejectedValue(error);
-    jest
-      .spyOn(metricsService, 'incrementSentEmailsErrorCounter')
-      .mockResolvedValue();
-
-    await expect(service.sendCurrentRate(payload)).rejects.toThrowError(error);
-
-    expect(prismaDbService.email.findUnique).toBeCalledWith({
-      where: {
+    it('should have error in email sending', async () => {
+      const error = new Error('Email sending error');
+      const email = crypto.randomBytes(10).toString('hex');
+      const record = generateRandomEmail({ email });
+      const payload: ISendCurrentRate = {
         email,
-      },
+        rate: 2_000_000,
+        date: new Date(),
+      };
+      const html = `\n  <p>Exchange rate is 1 BTC = 2 000 000.00 UAH at ${payload.date.toString()}</p>\n`;
+
+      jest.spyOn(prismaDbService.email, 'findUnique').mockResolvedValue(record);
+      jest.spyOn(mailerService, 'send').mockRejectedValue(error);
+      jest
+        .spyOn(metricsService, 'incrementSentEmailsErrorCounter')
+        .mockResolvedValue();
+
+      await expect(service.sendCurrentRate(payload)).rejects.toThrowError(
+        error,
+      );
+
+      expect(prismaDbService.email.findUnique).toBeCalledWith({
+        where: {
+          email,
+        },
+      });
+      expect(prismaDbService.email.findUnique).toBeCalledTimes(1);
+
+      expect(metricsService.incrementSentEmailsCounter).toBeCalledTimes(0);
+
+      expect(mailerService.send).toBeCalledWith({
+        to: payload.email,
+        subject: EMAIL_CONSTANTS.DEFAULT_SUBJECT,
+        message: EMAIL_CONSTANTS.DEFAULT_MESSAGE + html,
+      });
+      expect(mailerService.send).toBeCalledTimes(1);
+
+      expect(logger.error).toBeCalledWith(
+        `Error sending letter to ${payload.email}`,
+      );
+      expect(logger.error).toBeCalledTimes(1);
+
+      expect(metricsService.incrementSentEmailsErrorCounter).toBeCalledWith();
+      expect(metricsService.incrementSentEmailsErrorCounter).toBeCalledTimes(1);
     });
-    expect(prismaDbService.email.findUnique).toBeCalledTimes(1);
-
-    expect(metricsService.incrementSentEmailsCounter).toBeCalledTimes(0);
-
-    expect(mailerService.send).toBeCalledWith({
-      to: payload.email,
-      subject: EMAIL_CONSTANTS.DEFAULT_SUBJECT,
-      message: EMAIL_CONSTANTS.DEFAULT_MESSAGE + html,
-    });
-    expect(mailerService.send).toBeCalledTimes(1);
-
-    expect(logger.error).toBeCalledWith(
-      `Error sending letter to ${payload.email}`,
-    );
-    expect(logger.error).toBeCalledTimes(1);
-
-    expect(metricsService.incrementSentEmailsErrorCounter).toBeCalledWith();
-    expect(metricsService.incrementSentEmailsErrorCounter).toBeCalledTimes(1);
   });
 });

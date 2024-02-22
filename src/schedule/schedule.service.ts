@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { Cron, CronExpression } from '@nestjs/schedule';
-import { EmailService } from 'src/email/services/email.service';
-import { MetricsService } from 'src/metrics/metrics.service';
-import { RateService } from 'src/rate/rate.service';
+import { EmailService } from '../email/services/email.service';
+import { MetricsService } from '../metrics/metrics.service';
+import { RateService } from '../rate/rate.service';
 import { SCHEDULE_CONSTANTS } from './schedule.constants';
 
 @Injectable()
