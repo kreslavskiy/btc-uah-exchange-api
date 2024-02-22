@@ -4,4 +4,5 @@ export enum MetricsType {
   subscription_counter,
   unsubscription_counter,
   rate_gauge,
+  last_sent_rate,
 }

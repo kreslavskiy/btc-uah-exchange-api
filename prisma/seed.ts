@@ -6,6 +6,18 @@ async function main(): Promise<void> {
   const seedPromises = [];
 
   for (const metric of Object.values(MetricsTypePrisma)) {
+    if (metric === MetricsTypePrisma.last_sent_rate) {
+      seedPromises.push(
+        prisma.metrics.create({
+          data: {
+            value: 2_000_000,
+            type: metric as MetricsTypePrisma,
+          },
+        }),
+      );
+      continue;
+    }
+
     seedPromises.push(
       prisma.metrics.create({
         data: {

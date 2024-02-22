@@ -7,6 +7,10 @@ export const METRICS_CONSTANTS = Object.freeze({
       NAME: 'rate_gauge',
       HELP: 'Current exchange rate',
     },
+    LAST_SENT_RATE: {
+      NAME: 'last_sent_rate',
+      HELP: 'Last sent exchange rate',
+    },
   },
   COUNTERS: {
     SENT_EMAILS: {
