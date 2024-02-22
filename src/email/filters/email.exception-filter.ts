@@ -1,8 +1,11 @@
 import { ArgumentsHost, Catch } from '@nestjs/common';
 import { Response } from 'express';
+import { PinoLogger } from 'nestjs-pino';
 
 @Catch()
 export class EmailFilter {
+  private readonly logger: PinoLogger = new PinoLogger({});
+
   public catch(exception: Error, host: ArgumentsHost): void {
     const response = host.switchToHttp().getResponse<Response>();
 
@@ -26,6 +29,8 @@ export class EmailFilter {
           statusCode: 500,
           error: exception.message,
         });
+
+        this.logger.error(exception.message, exception.stack);
     }
   }
 }

@@ -1,9 +1,10 @@
 import { Module } from '@nestjs/common';
-import { RateModule } from './rate/rate.module';
+import { LoggerModule } from 'nestjs-pino';
 import { ConfigModule } from '@nestjs/config';
+import { DbModule } from './db/db.module';
+import { RateModule } from './rate/rate.module';
 import { EmailModule } from './email/email.module';
 import { MetricsModule } from './metrics/metrics.module';
-import { DbModule } from './db/db.module';
 
 @Module({
   imports: [
@@ -11,6 +12,16 @@ import { DbModule } from './db/db.module';
     RateModule,
     EmailModule,
     MetricsModule,
+    LoggerModule.forRoot({
+      pinoHttp: {
+        transport: {
+          target: 'pino-pretty',
+          options: {
+            singleLine: true,
+          },
+        },
+      },
+    }),
     ConfigModule.forRoot({
       isGlobal: true,
       envFilePath: ['.env', '.env.dist'],

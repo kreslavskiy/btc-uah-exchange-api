@@ -1,6 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import * as crypto from 'crypto';
 import { Email } from '@prisma/client';
+import { getLoggerToken, PinoLogger } from 'nestjs-pino';
 import { EmailError } from '../email.error';
 import { PrismaDBService } from '../../db/db.servise';
 import { EmailService } from '../services/email.service';
@@ -12,6 +13,7 @@ import { ISendCurrentRate } from '../interfaces/send-current-rate.interface';
 import { EMAIL_CONSTANTS } from '../email.constants';
 
 describe('EmailService', () => {
+  let logger: PinoLogger;
   let service: EmailService;
   let metricsService: MetricsService;
   let prismaDbService: PrismaDBService;
@@ -47,9 +49,17 @@ describe('EmailService', () => {
             send: jest.fn(),
           },
         },
+        {
+          provide: getLoggerToken(EmailService.name),
+          useValue: {
+            info: jest.fn(),
+            error: jest.fn(),
+          },
+        },
       ],
     }).compile();
 
+    logger = module.get<PinoLogger>(getLoggerToken(EmailService.name));
     service = module.get<EmailService>(EmailService);
     metricsService = module.get<MetricsService>(MetricsService);
     prismaDbService = module.get<PrismaDBService>(PrismaDBService);
@@ -101,6 +111,8 @@ describe('EmailService', () => {
       });
       expect(prismaDbService.email.findUnique).toBeCalledTimes(1);
 
+      expect(logger.error).toBeCalledTimes(0);
+
       expect(prismaDbService.email.create).toBeCalledWith({
         data: {
           email,
@@ -129,6 +141,9 @@ describe('EmailService', () => {
       });
       expect(prismaDbService.email.findUnique).toBeCalledTimes(1);
 
+      expect(logger.error).toBeCalledWith(`Email ${email} exists`);
+      expect(logger.error).toBeCalledTimes(1);
+
       expect(prismaDbService.email.create).toBeCalledTimes(0);
 
       expect(metricsService.incrementSubscribtionCounter).toBeCalledTimes(0);
@@ -156,6 +171,8 @@ describe('EmailService', () => {
         },
       });
       expect(prismaDbService.email.findUnique).toBeCalledTimes(1);
+
+      expect(logger.error).toBeCalledTimes(0);
 
       expect(prismaDbService.email.update).toBeCalledWith({
         where: {
@@ -187,6 +204,9 @@ describe('EmailService', () => {
         },
       });
       expect(prismaDbService.email.findUnique).toBeCalledTimes(1);
+
+      expect(logger.error).toBeCalledWith(`Email ${email} not found`);
+      expect(logger.error).toBeCalledTimes(1);
 
       expect(prismaDbService.email.update).toBeCalledTimes(0);
 
@@ -222,6 +242,8 @@ describe('EmailService', () => {
       });
       expect(prismaDbService.email.findUnique).toBeCalledTimes(1);
 
+      expect(logger.error).toBeCalledTimes(0);
+
       expect(metricsService.incrementSentEmailsCounter).toBeCalled();
       expect(metricsService.incrementSentEmailsCounter).toBeCalledTimes(1);
 
@@ -254,6 +276,9 @@ describe('EmailService', () => {
         },
       });
       expect(prismaDbService.email.findUnique).toBeCalledTimes(1);
+
+      expect(logger.error).toBeCalledWith(`Email ${email} not found`);
+      expect(logger.error).toBeCalledTimes(1);
 
       expect(metricsService.incrementSentEmailsCounter).toBeCalledTimes(0);
     });
@@ -292,6 +317,12 @@ describe('EmailService', () => {
       subject: EMAIL_CONSTANTS.DEFAULT_SUBJECT,
       message: EMAIL_CONSTANTS.DEFAULT_MESSAGE + html,
     });
+    expect(mailerService.send).toBeCalledTimes(1);
+
+    expect(logger.error).toBeCalledWith(
+      `Error sending letter to ${payload.email}`,
+    );
+    expect(logger.error).toBeCalledTimes(1);
 
     expect(metricsService.incrementSentEmailsErrorCounter).toBeCalledWith();
     expect(metricsService.incrementSentEmailsErrorCounter).toBeCalledTimes(1);
