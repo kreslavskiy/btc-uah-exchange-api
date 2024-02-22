@@ -8,4 +8,6 @@ export interface IMetrics {
   rate_gauge: number;
 
   sent_emails_counter: number;
+
+  last_sent_rate: number;
 }

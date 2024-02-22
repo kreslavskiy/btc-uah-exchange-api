@@ -17,6 +17,8 @@ export class MetricsService {
 
   private rateGauge: Gauge<string>;
 
+  private lastSentRate: Gauge<string>;
+
   constructor(private readonly prismaDbService: PrismaDBService) {
     this.subscriptionCounter = new Counter({
       name: METRICS_CONSTANTS.COUNTERS.SUBSCRIPTION.NAME,
@@ -43,6 +45,11 @@ export class MetricsService {
       help: METRICS_CONSTANTS.GAUGES.RATE.HELP,
     });
 
+    this.lastSentRate = new Gauge({
+      name: METRICS_CONSTANTS.GAUGES.LAST_SENT_RATE.NAME,
+      help: METRICS_CONSTANTS.GAUGES.LAST_SENT_RATE.HELP,
+    });
+
     register.clear();
     register.setDefaultLabels({
       app: METRICS_CONSTANTS.DEFAULT_LABELS.APP,
@@ -53,6 +60,7 @@ export class MetricsService {
     register.registerMetric(this.sentEmailsCounter);
     register.registerMetric(this.sentEmailsErrorCounter);
     register.registerMetric(this.rateGauge);
+    register.registerMetric(this.lastSentRate);
   }
 
   public async incrementSubscribtionCounter(): Promise<void> {
@@ -150,11 +158,31 @@ export class MetricsService {
     return gauge.values[0].value;
   }
 
+  public async setLastSentRate(rate: number): Promise<void> {
+    this.lastSentRate.set(rate);
+
+    await this.prismaDbService.metrics.update({
+      data: {
+        value: rate,
+      },
+      where: {
+        type: MetricsType.last_sent_rate,
+      },
+    });
+  }
+
+  public async getLastSentRate(): Promise<number> {
+    const gauge = await this.lastSentRate.get();
+
+    return gauge.values[0].value;
+  }
+
   public async getAll(): Promise<IMetrics> {
     const metrics = await this.prismaDbService.metrics.findMany();
 
     const result: IMetrics = {
       rate_gauge: 0,
+      last_sent_rate: 0,
       sent_emails_counter: 0,
       subscription_counter: 0,
       unsubscription_counter: 0,

@@ -18,6 +18,9 @@ export class MetricsResponse {
   @Expose()
   public readonly sent_emails_counter: number;
 
+  @Expose()
+  public readonly last_sent_rate: number;
+
   constructor(metrics: IMetrics) {
     Object.assign(this, metrics);
   }
