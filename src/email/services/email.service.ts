@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { Email, Status } from '@prisma/client';
+import { PinoLogger, InjectPinoLogger } from 'nestjs-pino';
 import { EmailError } from '../email.error';
 import { MailerEmailService } from './mailer-email.service';
 import { EMAIL_CONSTANTS } from '../email.constants';
@@ -15,6 +16,8 @@ export class EmailService {
     private readonly metricsService: MetricsService,
     private readonly prismaDbService: PrismaDBService,
     private readonly mailerService: MailerEmailService,
+    @InjectPinoLogger(EmailService.name)
+    private readonly logger: PinoLogger,
   ) {}
 
   public async findAll(): Promise<Email[]> {
@@ -29,6 +32,8 @@ export class EmailService {
     });
 
     if (exists) {
+      this.logger.error(`Email ${email} exists`);
+
       throw EmailError.AlreadyExists();
     }
 
@@ -51,6 +56,8 @@ export class EmailService {
     });
 
     if (!record) {
+      this.logger.error(`Email ${email} not found`);
+
       throw EmailError.NotFound();
     }
 
@@ -77,6 +84,8 @@ export class EmailService {
     });
 
     if (!record) {
+      this.logger.error(`Email ${payload.email} not found`);
+
       throw EmailError.NotFound();
     }
 
@@ -91,8 +100,12 @@ export class EmailService {
         subject: EMAIL_CONSTANTS.DEFAULT_SUBJECT,
         message: (payload.message || EMAIL_CONSTANTS.DEFAULT_MESSAGE) + html,
       });
+
+      this.logger.info(`Letter sent to ${payload.email}`);
     } catch (error) {
       this.metricsService.incrementSentEmailsErrorCounter();
+
+      this.logger.error(`Error sending letter to ${payload.email}`);
 
       throw error;
     }
