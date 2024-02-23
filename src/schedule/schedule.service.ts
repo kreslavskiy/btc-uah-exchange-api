@@ -4,6 +4,7 @@ import { EmailService } from '../email/services/email.service';
 import { MetricsService } from '../metrics/metrics.service';
 import { RateService } from '../rate/rate.service';
 import { SCHEDULE_CONSTANTS } from './schedule.constants';
+import { Status } from '../email/enums/email-status.enum';
 
 @Injectable()
 export class ScheduleService {
@@ -24,7 +25,7 @@ export class ScheduleService {
     ) {
       await this.metricsServise.setLastSentRate(rate);
 
-      const emails = await this.emailService.findAll();
+      const emails = await this.emailService.findAll(Status.subscribed);
 
       const sendEmailsPromises: Promise<void>[] = [];
 
@@ -47,7 +48,7 @@ export class ScheduleService {
     timeZone: SCHEDULE_CONSTANTS.LOCAL_TIMEZONE,
   })
   public async sendCurrentRateEmail(): Promise<void> {
-    const emails = await this.emailService.findAll();
+    const emails = await this.emailService.findAll(Status.subscribed);
 
     const { rate, date } = await this.rateService.getExchangeRate();
 

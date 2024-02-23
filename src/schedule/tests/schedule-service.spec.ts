@@ -6,6 +6,7 @@ import { SCHEDULE_CONSTANTS } from '../schedule.constants';
 import { MetricsService } from '../../metrics/metrics.service';
 import { EmailService } from '../../email/services/email.service';
 import { generateRandomEmail } from '../../email/tests/utils/generate-random-email.util';
+import { Status } from '../../email/enums/email-status.enum';
 
 describe('ScheduleService', () => {
   let service: ScheduleService;
@@ -86,7 +87,7 @@ describe('ScheduleService', () => {
       expect(metricsService.getLastSentRate).toBeCalledWith();
       expect(metricsService.getLastSentRate).toBeCalledTimes(1);
 
-      expect(emailService.findAll).toBeCalledWith();
+      expect(emailService.findAll).toBeCalledWith(Status.subscribed);
       expect(emailService.findAll).toBeCalledTimes(1);
 
       expect(metricsService.setLastSentRate).toBeCalledWith(rateResult.rate);
@@ -131,7 +132,7 @@ describe('ScheduleService', () => {
       expect(rateService.getExchangeRate).toBeCalledWith();
       expect(rateService.getExchangeRate).toBeCalledTimes(1);
 
-      expect(emailService.findAll).toBeCalledWith();
+      expect(emailService.findAll).toBeCalledWith(Status.subscribed);
       expect(emailService.findAll).toBeCalledTimes(1);
 
       for (const record of emails) {
