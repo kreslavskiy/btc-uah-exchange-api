@@ -66,7 +66,7 @@ $ docker exec service_app npx prisma db seed
 ```
 >**Note**: not recommended
 
-Or you can put migrations commands into start command in Docker file like this:
+Or you can put migrations commands into start command in Dockerfile like this:
 ```Dockerfile
 CMD sh -c "npx prisma migrate deploy && npx prisma db seed && npm run start:prod"
 ```
