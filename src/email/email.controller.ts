@@ -1,17 +1,20 @@
-import { Body, Controller, Delete, Get, Post } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Post, Query } from '@nestjs/common';
 import { EmailService } from './services/email.service';
 import { CreateEmailSchema } from './schemas/create-email.schema';
 import { EmailModelResponse } from './responses/email-model.response';
 import { DeleteEmailResponse } from './responses/delete-email.response';
 import { EmailModelsResponse } from './responses/email-models.response';
+import { Status } from '@prisma/client';
 
 @Controller('api/email/subscription')
 export class EmailController {
   constructor(private readonly emailService: EmailService) {}
 
   @Get()
-  public async findAll(): Promise<EmailModelsResponse> {
-    const emails = await this.emailService.findAll();
+  public async findAll(
+    @Query('status') status?: Status,
+  ): Promise<EmailModelsResponse> {
+    const emails = await this.emailService.findAll(status);
 
     return new EmailModelsResponse(emails);
   }

@@ -84,7 +84,9 @@ describe('EmailService', () => {
 
       expect(result).toEqual(records);
 
-      expect(prismaDbService.email.findMany).toBeCalledWith();
+      expect(prismaDbService.email.findMany).toBeCalledWith({
+        where: {},
+      });
       expect(prismaDbService.email.findMany).toBeCalledTimes(1);
     });
   });
@@ -238,6 +240,7 @@ describe('EmailService', () => {
       expect(prismaDbService.email.findUnique).toBeCalledWith({
         where: {
           email,
+          status: Status.subscribed,
         },
       });
       expect(prismaDbService.email.findUnique).toBeCalledTimes(1);
@@ -273,11 +276,14 @@ describe('EmailService', () => {
       expect(prismaDbService.email.findUnique).toBeCalledWith({
         where: {
           email,
+          status: Status.subscribed,
         },
       });
       expect(prismaDbService.email.findUnique).toBeCalledTimes(1);
 
-      expect(logger.error).toBeCalledWith(`Email ${email} not found`);
+      expect(logger.error).toBeCalledWith(
+        `Email ${email} not found or unsubscribed`,
+      );
       expect(logger.error).toBeCalledTimes(1);
 
       expect(metricsService.incrementSentEmailsCounter).toBeCalledTimes(0);
@@ -307,6 +313,7 @@ describe('EmailService', () => {
       expect(prismaDbService.email.findUnique).toBeCalledWith({
         where: {
           email,
+          status: Status.subscribed,
         },
       });
       expect(prismaDbService.email.findUnique).toBeCalledTimes(1);

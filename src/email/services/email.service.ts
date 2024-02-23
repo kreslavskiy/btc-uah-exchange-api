@@ -20,8 +20,12 @@ export class EmailService {
     private readonly logger: PinoLogger,
   ) {}
 
-  public async findAll(): Promise<Email[]> {
-    return this.prismaDbService.email.findMany();
+  public async findAll(status?: Status): Promise<Email[]> {
+    return this.prismaDbService.email.findMany({
+      where: {
+        status,
+      },
+    });
   }
 
   public async create(email: string): Promise<Email> {
@@ -80,11 +84,12 @@ export class EmailService {
     const record = await this.prismaDbService.email.findUnique({
       where: {
         email: payload.email,
+        status: Status.subscribed,
       },
     });
 
     if (!record) {
-      this.logger.error(`Email ${payload.email} not found`);
+      this.logger.error(`Email ${payload.email} not found or unsubscribed`);
 
       throw EmailError.NotFound();
     }
