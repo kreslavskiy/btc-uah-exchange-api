@@ -78,7 +78,3 @@ but in that case migrations will run and throw an error when you'll try to run t
 # unit tests
 $ npm run test
 ```
-
-## License
-
-Nest is [MIT licensed](LICENSE).
