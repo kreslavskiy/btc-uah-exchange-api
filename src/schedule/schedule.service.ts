@@ -11,19 +11,19 @@ export class ScheduleService {
   constructor(
     private readonly rateService: RateService,
     private readonly emailService: EmailService,
-    private readonly metricsServise: MetricsService,
+    private readonly metricsService: MetricsService,
   ) {}
 
   @Cron(CronExpression.EVERY_HOUR)
   public async sendChangeRateEmail(): Promise<void> {
     const { rate, date } = await this.rateService.getExchangeRate();
 
-    const previousRate = await this.metricsServise.getLastSentRate();
+    const previousRate = await this.metricsService.getLastSentRate();
 
     if (
       Math.abs(rate - previousRate) > SCHEDULE_CONSTANTS.RATE_CHANGE_THRESHOLD
     ) {
-      await this.metricsServise.setLastSentRate(rate);
+      await this.metricsService.setLastSentRate(rate);
 
       const emails = await this.emailService.findAll(Status.subscribed);
 
